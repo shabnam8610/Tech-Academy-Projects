@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Favorite Music Video</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #24304a;
+      background: linear-gradient(135deg, #fce7f3, #e0e7ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 16px;
+    }
+    .card {
+      width: min(100%, 780px);
+      background: #ffffff;
+      padding: 34px;
+      border-radius: 22px;
+      box-shadow: 0 14px 40px rgba(53, 43, 92, 0.16);
+      text-align: center;
+    }
+    h1 { color: #8b3d87; margin: 0 0 12px; }
+    p { line-height: 1.6; }
+    .video-frame {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      margin-top: 12px;
+    }
+    .animation-area {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100px;
+      margin-top: 22px;
+      border: 2px dashed #d8b4df;
+      border-radius: 14px;
+      background: #fdf4ff;
+    }
+    #music-note {
+      position: absolute;
+      top: 25px;
+      left: 0;
+      font-size: 44px;
+      line-height: 1;
+      user-select: none;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: #8b3d87;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover { background: #702d6e; }
+    .footer { font-size: 13px; color: #68748a; margin-top: 22px; }
+    @media (max-width: 520px) { .card { padding: 20px; } h1 { font-size: 25px; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>🎵 My Favorite Music Video 🎵</h1>
+    <p>One song I enjoy is <strong>"Yellow" by Coldplay</strong>.
+       I like its relaxing melody and meaningful lyrics.</p>
+
+    <!-- Embedded YouTube video. You can replace the video ID with your own favorite song. -->
+    <iframe
+      class="video-frame"
+      src="https://www.youtube.com/embed/yKNxeF4KMsY"
+      title="Coldplay - Yellow (Official Video)"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+
+    <h2>JavaScript Music Note Animation</h2>
+    <p>Click the button to start or pause the moving music note.</p>
+    <div class="animation-area" id="animation-area" aria-label="Animated moving music note">
+      <span id="music-note" aria-hidden="true">🎵</span>
+    </div>
+    <button type="button" id="toggle-animation">Start Animation</button>
+
+    <p class="footer">Created using HTML, CSS, and JavaScript for my Visual Studio assignment.</p>
+  </main>
+
+  <script>
+    const area = document.getElementById('animation-area');
+    const note = document.getElementById('music-note');
+    const button = document.getElementById('toggle-animation');
+
+    let running = false;
+    let position = 0;
+    let direction = 1;
+    let previousTime = null;
+    let frameId = null;
+    const speed = 160; // Pixels per second
+
+    function animate(time) {
+      if (!running) return;
+      if (previousTime === null) previousTime = time;
+      const seconds = Math.min((time - previousTime) / 1000, 0.05);
+      previousTime = time;
+      const maxPosition = Math.max(0, area.clientWidth - note.offsetWidth - 8);
+      position += direction * speed * seconds;
+      if (position >= maxPosition) {
+        position = maxPosition;
+        direction = -1;
+      } else if (position <= 0) {
+        position = 0;
+        direction = 1;
+      }
+      note.style.transform = `translateX(${position}px)`;
+      frameId = requestAnimationFrame(animate);
+    }
+
+    button.addEventListener('click', () => {
+      running = !running;
+      button.textContent = running ? 'Pause Animation' : 'Start Animation';
+      if (running) {
+        previousTime = null;
+        frameId = requestAnimationFrame(animate);
+      } else if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+        frameId = null;
+      }
+    });
+  </script>
+</body>
+</html>
